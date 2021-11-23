@@ -1,6 +1,7 @@
 import os
 import random
 import time
+# import cgi
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import urllib.parse
 import urllib.request
@@ -27,6 +28,7 @@ class WebServerHandler(BaseHTTPRequestHandler):
         content = str(os.getenv('CONTENT', 'EMPTY'))
         my_hostname = str(os.getenv('HOSTNAME', 'localhost'))
         my_ip_address = str(os.getenv('IP_ADDRESS', '127.0.0.1'))
+        health_status_factor = int(os.getenv('HEALTH_STATUS_FACTOR', '0'))
         current_request = urllib.parse.urlsplit(self.path)
         # print("path = " + current_request.path)
         try:
@@ -59,10 +61,17 @@ class WebServerHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(content.encode("utf-8"))
             elif current_request.path == "/healthz":
-                self.send_response(200)
-                self.send_header('Content-type', 'text/html')
-                self.end_headers()
-                page = '{ "status": "ok" }'
+                crash_random = random.randint(0,99)
+                if health_status_factor > 0 and health_status_factor > crash_random:
+                    self.send_response(500)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    page = '{ "status": "error" }\n' 
+                else:
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    page = '{ "status": "ok" }\n'
                 self.wfile.write(page.encode("utf-8"))
             else:
                 self.send_error(404, "File Not Found {}".format(self.path))
