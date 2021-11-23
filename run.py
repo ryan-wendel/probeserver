@@ -24,7 +24,7 @@ if crash_factor > 0:
 
 class WebServerHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        content = str(os.getenv('CONTENT', 'Hello World'))
+        content = str(os.getenv('CONTENT', 'EMPTY'))
         my_hostname = str(os.getenv('HOSTNAME', 'localhost'))
         my_ip_address = str(os.getenv('IP_ADDRESS', '127.0.0.1'))
         current_request = urllib.parse.urlsplit(self.path)
@@ -34,8 +34,9 @@ class WebServerHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
-                content = "Hostname = " + my_hostname + "\n"
-                content += "Ip Address = " + my_ip_address + "\n"
+                if content == "EMPTY":
+                    content = "Hostname = " + my_hostname + "\n"
+                    content += "Ip Address = " + my_ip_address + "\n"
                 self.wfile.write(content.encode("utf-8"))
             elif current_request.path == "/crash":
                 print('Crashing container')
@@ -46,7 +47,8 @@ class WebServerHandler(BaseHTTPRequestHandler):
                 if current_request["service"]:
                     url = "http://" + current_request["service"]
                     response = urllib.request.urlopen(url)
-                    content = "Hostname = " + my_hostname + "\n"
+                    content = "----------------------------------------------------\n"
+                    content += "Hostname = " + my_hostname + "\n"
                     content += "Ip Address = " + my_ip_address + "\n"
                     content += "Service hostname = " + current_request["service"] + "\n"
                     content += "Service IP = " + gethostbyname(current_request["service"]) + "\n"
@@ -77,6 +79,7 @@ def main():
     except KeyboardInterrupt:
         print("Stopping web server...")
         server.socket.close()
+
 
 if __name__ == '__main__':
     main()
