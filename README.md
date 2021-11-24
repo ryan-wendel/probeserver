@@ -1,2 +1,2 @@
-# probeserver
-A Docker container used to research the k8s pod lifecycle and proxy behavior.
+# Probeserver Docker Container
+Experimenting with a Docker container that aids in researching the self-healing capabilities afforded by Kubernetes to help manage issues encountered during pod lifecycle.
