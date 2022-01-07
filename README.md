@@ -7,6 +7,7 @@ This container can be coerced into doing the following through the use of enviro
 - **START_WAIT_SECS**: Pause for a specific amount of time before starting a web server.
 
 A good reference for setting environments variables for containers can be found at the following link.
+
 [Define Environment Variables for a Container](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
 
 Additionally, the following functionality can be accessed via URLs served by the container's application server.
